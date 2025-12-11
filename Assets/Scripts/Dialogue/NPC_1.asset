@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f18381406e968442b60a852a2f7589e, type: 3}
+  m_Name: NPC_1
+  m_EditorClassIdentifier: 
+  actor: {fileID: 6097170745975668781, guid: 2cafa38e6d9287a418b41d26ba0dfe7f, type: 3}
+  speakerSprite: {fileID: 0}
+  sentence: 
+  dialogues:
+  - actorName: NPC
+    profile: {fileID: 1639805248, guid: da68f6c8145bc4145bbe520e7ad12fb2, type: 3}
+    sentence:
+      portuguese: "Eae meu par\xE7a"
+      english: 
+      spanish: 
+  - actorName: PROTAGONISTA
+    profile: {fileID: 2100619519, guid: da68f6c8145bc4145bbe520e7ad12fb2, type: 3}
+    sentence:
+      portuguese: Fala meu confrade
+      english: 
+      spanish: 
