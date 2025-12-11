@@ -167,8 +167,9 @@ public class HudControler : MonoBehaviour
 
             if (animateSelection)
             {
-                float scale = selected ? selectedScale : 1f;
-                toolsUI[i].transform.localScale = Vector3.one * scale;
+                //float scale = selected ? selectedScale : 1f;
+                //toolsUI[i].transform.localScale = Vector3.one * scale;
+                toolsUI[i].transform.localScale = Vector3.one * 0.6f;
             }
         }
 

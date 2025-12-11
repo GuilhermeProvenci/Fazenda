@@ -23,5 +23,5 @@ MonoBehaviour:
   resultItemType: 7
   resultAmount: 2
   resultPrefab: {fileID: 0}
-  requiresWorkbench: 0
+  requiresWorkbench: 1
   unlockLevel: 0

@@ -32,8 +32,8 @@ public class House : MonoBehaviour
     [SerializeField] private AudioClip hammerSound;
     [SerializeField] private AudioClip completeSound;
 
-    [Header("UI")]
-    [SerializeField] private GameObject promptUI;
+    //[Header("UI")]
+    //[SerializeField] private GameObject promptUI;
 
     // Estado
     private bool detectingPlayer;
@@ -84,8 +84,8 @@ public class House : MonoBehaviour
         CreateProgressBar();
         InitializeVisual();
 
-        if (promptUI != null)
-            promptUI.SetActive(false);
+        //if (promptUI != null)
+        //promptUI.SetActive(false);
     }
 
     private void Update()
@@ -186,7 +186,7 @@ public class House : MonoBehaviour
 
         PlaySound(hammerSound, true);
 
-        promptUI?.SetActive(false);
+        //promptUI?.SetActive(false);
     }
 
     // ------------------------------------------------------
@@ -245,7 +245,7 @@ public class House : MonoBehaviour
             houseSprite.color = Color.Lerp(houseSprite.color, target, Time.deltaTime * 5f);
         }
 
-        promptUI?.SetActive(true);
+        //promptUI?.SetActive(true);
     }
 
     // ------------------------------------------------------
@@ -277,7 +277,7 @@ public class House : MonoBehaviour
             if (!isBuilding && !isBuilt && houseSprite != null)
                 houseSprite.color = startColor;
 
-            promptUI?.SetActive(false);
+            //promptUI?.SetActive(false);
         }
     }
 

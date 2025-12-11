@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9df4c540f9b29340bf833f632b5d46e, type: 3}
+  m_Name: ItemDatabase
+  m_EditorClassIdentifier: 
+  items:
+  - type: 0
+    displayName: Wood
+    icon: {fileID: -12690231, guid: 13573d3e99e795343bb3ca60e3a7f322, type: 3}
+    description: Item do tipo Wood
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 1
+    displayName: Carrot
+    icon: {fileID: 1863134427, guid: 13573d3e99e795343bb3ca60e3a7f322, type: 3}
+    description: Item do tipo Carrot
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 2
+    displayName: Fish
+    icon: {fileID: 1929623577, guid: 13573d3e99e795343bb3ca60e3a7f322, type: 3}
+    description: Item do tipo Fish
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 3
+    displayName: Water
+    icon: {fileID: 1282578934, guid: 13573d3e99e795343bb3ca60e3a7f322, type: 3}
+    description: Item do tipo Water
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 4
+    displayName: Fence
+    icon: {fileID: 0}
+    description: Item do tipo Fence
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 5
+    displayName: Chest
+    icon: {fileID: 0}
+    description: Item do tipo Chest
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 6
+    displayName: Meal
+    icon: {fileID: 0}
+    description: Item do tipo Meal
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 7
+    displayName: Wooden Plank
+    icon: {fileID: 21300000, guid: 8d339b4690322284a87ce8e82f37739d, type: 3}
+    description: Item do tipo WoodenPlank
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 8
+    displayName: Stone
+    icon: {fileID: 0}
+    description: Item do tipo Stone
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
+  - type: 9
+    displayName: Iron Ore
+    icon: {fileID: 0}
+    description: Item do tipo IronOre
+    iconTint: {r: 1, g: 1, b: 1, a: 1}
