@@ -40,7 +40,7 @@ MonoBehaviour:
     iconTint: {r: 1, g: 1, b: 1, a: 1}
   - type: 5
     displayName: Chest
-    icon: {fileID: 0}
+    icon: {fileID: 397546581, guid: 13573d3e99e795343bb3ca60e3a7f322, type: 3}
     description: Item do tipo Chest
     iconTint: {r: 1, g: 1, b: 1, a: 1}
   - type: 6
