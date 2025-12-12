@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 /// <summary>
-/// Botão individual de receita no menu de crafting
+/// Botão de receita melhorado com evento de seleção
 /// </summary>
 public class RecipeButton : MonoBehaviour
 {
@@ -11,16 +12,21 @@ public class RecipeButton : MonoBehaviour
     [SerializeField] private Button button;
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI ingredientsText;
     [SerializeField] private Image backgroundImage;
+    [SerializeField] private GameObject lockIcon;
 
     [Header("Colors")]
     [SerializeField] private Color canCraftColor = Color.white;
     [SerializeField] private Color cannotCraftColor = new Color(0.5f, 0.5f, 0.5f);
+    [SerializeField] private Color selectedColor = new Color(0.3f, 0.8f, 0.3f);
 
     private CraftingRecipe recipe;
     private CraftingManager craftingManager;
     private InventoryController inventory;
+    private bool isSelected;
+
+    // Evento de seleção
+    public event Action<CraftingRecipe> OnSelected;
 
     // ---------------------------
     // SETUP
@@ -33,21 +39,10 @@ public class RecipeButton : MonoBehaviour
 
         if (button != null)
             button.onClick.AddListener(OnClick);
-    }
 
-    private void Start()
-    {
         inventory = FindObjectOfType<InventoryController>();
     }
 
-    private void Update()
-    {
-        UpdateVisual();
-    }
-
-    /// <summary>
-    /// Configura o botão com uma receita
-    /// </summary>
     public void Setup(CraftingRecipe craftingRecipe, CraftingManager manager)
     {
         recipe = craftingRecipe;
@@ -65,41 +60,20 @@ public class RecipeButton : MonoBehaviour
 
         // Ícone
         if (iconImage != null && recipe.Icon != null)
+        {
             iconImage.sprite = recipe.Icon;
-
-        // Ingredientes
-        UpdateIngredientsText();
+            iconImage.enabled = true;
+        }
 
         // Visual inicial
         UpdateVisual();
     }
 
     // ---------------------------
-    // UI UPDATE
+    // UPDATE
     // ---------------------------
 
-    private void UpdateIngredientsText()
-    {
-        if (ingredientsText == null || recipe == null || inventory == null)
-            return;
-
-        string text = "";
-
-        foreach (var ingredient in recipe.Ingredients)
-        {
-            float current = inventory.Get(ingredient.itemType);
-            float needed = ingredient.amount;
-
-            bool hasEnough = current >= needed;
-            string color = hasEnough ? "green" : "red";
-
-            text += $"<color={color}>{ingredient.itemName}: {current}/{needed}</color>\n";
-        }
-
-        ingredientsText.text = text;
-    }
-
-    private void UpdateVisual()
+    public void UpdateVisual()
     {
         if (recipe == null || inventory == null)
             return;
@@ -108,14 +82,20 @@ public class RecipeButton : MonoBehaviour
 
         // Background
         if (backgroundImage != null)
-            backgroundImage.color = canCraft ? canCraftColor : cannotCraftColor;
+        {
+            if (isSelected)
+                backgroundImage.color = selectedColor;
+            else
+                backgroundImage.color = canCraft ? canCraftColor : cannotCraftColor;
+        }
 
-        // Botão interativo
+        // Lock icon
+        if (lockIcon != null)
+            lockIcon.SetActive(!canCraft);
+
+        // Botão sempre clicável (para ver detalhes)
         if (button != null)
-            button.interactable = canCraft;
-
-        // Ingredientes
-        UpdateIngredientsText();
+            button.interactable = true;
     }
 
     // ---------------------------
@@ -124,14 +104,21 @@ public class RecipeButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (recipe == null || craftingManager == null)
+        if (recipe == null)
             return;
 
-        Debug.Log($"[RecipeButton] Clicou em: {recipe.RecipeName}");
+        isSelected = true;
+        UpdateVisual();
 
-        craftingManager.TryCraft(recipe);
+        // Notifica que foi selecionado
+        OnSelected?.Invoke(recipe);
 
-        // Atualiza visual após craftar
+        Debug.Log($"[RecipeButton] Selecionada: {recipe.RecipeName}");
+    }
+
+    public void Deselect()
+    {
+        isSelected = false;
         UpdateVisual();
     }
 }

@@ -15,7 +15,9 @@ public class CraftingManager : MonoBehaviour
     [SerializeField] private bool requireWorkbenchForAll = false;
 
     [Header("References")]
-    [SerializeField] private GameObject craftingUI;
+    //[SerializeField] private GameObject craftingUI;
+    [SerializeField] private CraftingUI craftingUI;
+
     [SerializeField] private Transform craftingGrid;
     [SerializeField] private GameObject recipeButtonPrefab;
 
@@ -57,7 +59,7 @@ public class CraftingManager : MonoBehaviour
         }
 
         if (craftingUI != null)
-            craftingUI.SetActive(false);
+            craftingUI.gameObject.SetActive(false);
 
         Debug.Log($"[CraftingManager] Carregadas {allRecipes.Count} receitas");
     }
@@ -79,17 +81,18 @@ public class CraftingManager : MonoBehaviour
 
     public void ToggleCraftingMenu()
     {
-        menuOpen = !menuOpen;
-
         if (craftingUI != null)
         {
-            craftingUI.SetActive(menuOpen);
-
-            if (menuOpen)
-                RefreshRecipeList();
+            Debug.Log("[CraftingManager] Toggle Crafting UI");
+            craftingUI.Toggle();
         }
-
-        Debug.Log($"[CraftingManager] Menu {(menuOpen ? "aberto" : "fechado")}");
+        else
+        {
+            // Fallback para sistema antigo
+            menuOpen = !menuOpen;
+            if (craftingUI != null)
+                craftingUI.gameObject.SetActive(menuOpen);
+        }
     }
 
     // ---------------------------
