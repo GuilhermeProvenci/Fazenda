@@ -105,22 +105,3 @@ public class CraftingIngredient
     public float amount = 1;
     public Sprite icon;
 }
-
-/// <summary>
-/// Tipos de itens suportados
-/// </summary>
-public enum ItemType
-{
-    Wood,
-    Carrot,
-    Fish,
-    Water,
-
-    Fence,
-    Chest,
-    Meal,
-
-    WoodenPlank,
-    Stone,
-    IronOre
-}
