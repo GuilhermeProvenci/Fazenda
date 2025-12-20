@@ -4,9 +4,9 @@ using TMPro;
 using System.Collections.Generic;
 
 /// <summary>
-/// Novo HUD totalmente baseado em InventoryController
+/// Controlador do HUD baseado em InventoryController
 /// </summary>
-public class HudControler : MonoBehaviour
+public class HudController : MonoBehaviour
 {
     [Header("Item Bars")]
     [SerializeField] private Image waterUIBar;

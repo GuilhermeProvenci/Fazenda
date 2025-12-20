@@ -24,7 +24,7 @@ public class Player : MonoBehaviour
     // ------------------------------
     // COMPONENTS
     // ------------------------------
-    private HudControler hud;
+    private HudController hud;
     private Rigidbody2D rig;
     private InventoryController inventory;
 
@@ -43,10 +43,10 @@ public class Player : MonoBehaviour
     // ------------------------------
     private void Awake()
     {
-        hud = FindObjectOfType<HudControler>();
+        hud = FindObjectOfType<HudController>();
 
         if (hud == null)
-            Debug.LogWarning("Player: HudControler não encontrado na cena!");
+            Debug.LogWarning("Player: HudController não encontrado na cena!");
     }
 
     private void Start()
