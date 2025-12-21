@@ -144,3 +144,4 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   collectSound: {fileID: 0}
+  fishItem: {fileID: 11400000, guid: c47a5caa7ce5b5648b735af94dd6f49d, type: 2}

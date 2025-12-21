@@ -35,8 +35,11 @@ public class Water : MonoBehaviour
     private bool isCollecting;
     private float collectionProgress;
 
+    [Header("Inventory")]
+    private ItemData waterItem;
+
     // Componentes
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private ProgressBar progressBar;
     private AudioSource audioSource;
 
@@ -56,14 +59,17 @@ public class Water : MonoBehaviour
 
     private void Start()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (inventory == null)
         {
-            Debug.LogError("Water: InventoryController não encontrado!");
+            Debug.LogError("Water: InventorySystem não encontrado!");
             enabled = false;
             return;
         }
+
+        // Inicializa item via Registry
+        waterItem = ItemRegistry.GetItem("Water");
 
         CreateProgressBar();
 
@@ -97,13 +103,13 @@ public class Water : MonoBehaviour
 
     private void HandleInput()
     {
-        if (!detectingPlayer)
+        if (!detectingPlayer || waterItem == null)
             return;
 
         // Inicia coleta
         if (Input.GetKeyDown(collectKey) && !isCollecting)
         {
-            if (inventory.IsFull(ItemType.Water))
+            if (inventory.GetItemCount(waterItem) >= waterItem.maxStackSize - 0.001f)
             {
                 Debug.Log("Inventário de água está cheio!");
                 return;
@@ -146,7 +152,7 @@ public class Water : MonoBehaviour
 
     private void ContinueCollection()
     {
-        if (!isCollecting)
+        if (!isCollecting || waterItem == null)
             return;
 
         // Progresso visual
@@ -155,7 +161,7 @@ public class Water : MonoBehaviour
 
         // Adicionar água
         float amount = waterPerSecond * Time.deltaTime;
-        inventory.Add(ItemType.Water, amount);
+        inventory.AddItem(waterItem, amount);
 
         // Atualiza barra
         if (progressBar != null)
@@ -164,7 +170,7 @@ public class Water : MonoBehaviour
         }
 
         // Finaliza coleta
-        if (collectionProgress >= 1f || inventory.IsFull(ItemType.Water))
+        if (collectionProgress >= 1f || inventory.GetItemCount(waterItem) >= waterItem.maxStackSize - 0.001f)
         {
             CompleteCollection();
         }
@@ -220,9 +226,10 @@ public class Water : MonoBehaviour
             waterSprite.color = isCollecting ? collectingColor : normalColor;
 
         // Prompt
-        if (promptUI != null)
+        if (promptUI != null && waterItem != null)
         {
-            bool show = detectingPlayer && !isCollecting && !inventory.IsFull(ItemType.Water);
+            bool isFull = inventory.GetItemCount(waterItem) >= waterItem.maxStackSize - 0.001f;
+            bool show = detectingPlayer && !isCollecting && !isFull;
             promptUI.SetActive(show);
         }
     }
@@ -237,7 +244,7 @@ public class Water : MonoBehaviour
         {
             detectingPlayer = true;
 
-            if (inventory.IsFull(ItemType.Water))
+            if (waterItem != null && inventory.GetItemCount(waterItem) >= waterItem.maxStackSize - 0.001f)
                 Debug.Log("Inventário de água cheio!");
         }
     }

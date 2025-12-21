@@ -22,7 +22,7 @@ public class RecipeButton : MonoBehaviour
 
     private CraftingRecipe recipe;
     private CraftingManager craftingManager;
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private bool isSelected;
 
     // Evento de seleção
@@ -40,7 +40,7 @@ public class RecipeButton : MonoBehaviour
         if (button != null)
             button.onClick.AddListener(OnClick);
 
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
     }
 
     public void Setup(CraftingRecipe craftingRecipe, CraftingManager manager)

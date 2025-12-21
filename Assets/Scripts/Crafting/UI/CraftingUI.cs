@@ -37,7 +37,7 @@ public class CraftingUI : MonoBehaviour
 
     // Estado
     private CraftingManager craftingManager;
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private List<RecipeButton> recipeButtons = new List<RecipeButton>();
     private CraftingRecipe selectedRecipe;
     private RecipeFilter currentFilter = RecipeFilter.All;
@@ -51,7 +51,7 @@ public class CraftingUI : MonoBehaviour
     private void Awake()
     {
         craftingManager = FindObjectOfType<CraftingManager>();
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (craftingManager == null)
         {
@@ -62,24 +62,15 @@ public class CraftingUI : MonoBehaviour
 
         if (inventory == null)
         {
-            Debug.LogError("[CraftingUI] InventoryController não encontrado!");
+            Debug.LogError("[CraftingUI] InventorySystem não encontrado!");
             enabled = false;
             return;
         }
 
         SetupButtons();
-    }
-
-    private void Start()
-    {
-        if (craftingPanel != null)
-            craftingPanel.SetActive(false);
-
-        if (detailsPanel != null)
-            detailsPanel.SetActive(false);
-
-        // Inscreve-se em mudanças do inventário para atualizar botões
-        inventory.OnInventoryChanged += RefreshRecipeButtons;
+        
+        // Força fechamento no início para sincronizar estado
+        Close();
     }
 
     private void OnDestroy()
@@ -116,28 +107,35 @@ public class CraftingUI : MonoBehaviour
 
     public void Open()
     {
-        if (craftingPanel != null)
-            craftingPanel.SetActive(true);
+        if (craftingPanel == null) return;
 
+        // Fecha inventário para evitar sobreposição
+        FindObjectOfType<InventoryUI>()?.Close();
+
+        craftingPanel.SetActive(true);
         RefreshRecipeList();
         UpdateFilterButtons();
+        
+        Debug.Log("[CraftingUI] Menu aberto");
     }
 
     public void Close()
     {
-        if (craftingPanel != null)
-            craftingPanel.SetActive(false);
+        if (craftingPanel == null) return;
 
+        craftingPanel.SetActive(false);
         if (detailsPanel != null)
             detailsPanel.SetActive(false);
 
         selectedRecipe = null;
+        Debug.Log("[CraftingUI] Menu fechado");
     }
 
     public void Toggle()
     {
-        //if (craftingPanel != null && craftingPanel.activeSelf)
-        if (craftingPanel != null && craftingPanel.gameObject.activeSelf)
+        if (craftingPanel == null) return;
+
+        if (craftingPanel.activeSelf)
             Close();
         else
             Open();
@@ -194,6 +192,8 @@ public class CraftingUI : MonoBehaviour
 
     private void RefreshRecipeButtons()
     {
+        if (craftingPanel == null || !craftingPanel.activeSelf) return;
+
         // Atualiza apenas o visual dos botões existentes (mais performático)
         foreach (var button in recipeButtons)
         {
@@ -306,14 +306,29 @@ public class CraftingUI : MonoBehaviour
 
         string text = "<b>Ingredientes:</b>\n";
 
+        if (recipe.Ingredients == null || recipe.Ingredients.Length == 0)
+        {
+            text += "• <i>Nenhum ingrediente configurado.</i>\n";
+            ingredientsText.text = text;
+            return;
+        }
+
         foreach (var ingredient in recipe.Ingredients)
         {
-            float current = inventory.Get(ingredient.itemType);
+            ItemData item = ingredient.GetItem();
+            
+            if (item == null)
+            {
+                text += $"• <color=red>ERRO: ID '{ingredient.itemID}' inválido!</color>\n";
+                continue;
+            }
+
+            float current = inventory.GetItemCount(item);
             float needed = ingredient.amount;
-            bool hasEnough = current >= needed;
+            bool hasEnough = current >= needed - 0.001f;
 
             string color = hasEnough ? "green" : "red";
-            text += $"• <color={color}>{ingredient.itemName}: {current}/{needed}</color>\n";
+            text += $"• <color={color}>{item.itemName}: {current:F0}/{needed:F0}</color>\n";
         }
 
         ingredientsText.text = text;

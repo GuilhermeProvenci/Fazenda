@@ -66,15 +66,15 @@ public class InventorySystem : MonoBehaviour
     /// <summary>
     /// Adiciona um item ao inventário
     /// </summary>
-    public bool AddItem(ItemData item, int quantity = 1)
+    public bool AddItem(ItemData item, float quantity = 1f)
     {
-        if (item == null || quantity <= 0)
+        if (item == null || quantity <= 0.0001f)
         {
             Debug.LogWarning("[InventorySystem] Cannot add null item or invalid quantity");
             return false;
         }
         
-        int remaining = quantity;
+        float remaining = quantity;
         
         // Tenta empilhar em slots existentes (se stackable)
         if (item.isStackable)
@@ -83,15 +83,15 @@ public class InventorySystem : MonoBehaviour
             {
                 if (slot.Item == item && !slot.IsFull)
                 {
-                    int added = slot.AddQuantity(remaining);
+                    float added = slot.AddQuantity(remaining);
                     remaining -= added;
                     
                     OnItemAdded?.Invoke(slot);
                     
-                    if (remaining <= 0)
+                    if (remaining <= 0.0001f)
                     {
                         OnInventoryChanged?.Invoke();
-                        Debug.Log($"[InventorySystem] Added {quantity}x {item.itemName}");
+                        Debug.Log($"[InventorySystem] Added {quantity:F2}x {item.itemName}");
                         return true;
                     }
                 }
@@ -99,7 +99,7 @@ public class InventorySystem : MonoBehaviour
         }
         
         // Adiciona em slots vazios
-        while (remaining > 0)
+        while (remaining > 0.0001f)
         {
             var emptySlot = FindEmptySlot();
             
@@ -112,13 +112,13 @@ public class InventorySystem : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"[InventorySystem] Inventory full! Could not add {remaining}x {item.itemName}");
+                    Debug.LogWarning($"[InventorySystem] Inventory full! Could not add {remaining:F2}x {item.itemName}");
                     OnInventoryChanged?.Invoke();
                     return false; // Inventário cheio
                 }
             }
             
-            int toAdd = item.isStackable ? Mathf.Min(remaining, item.maxStackSize) : 1;
+            float toAdd = item.isStackable ? Mathf.Min(remaining, item.maxStackSize) : 1f;
             
             emptySlot.SetItem(item, toAdd);
             remaining -= toAdd;
@@ -127,7 +127,7 @@ public class InventorySystem : MonoBehaviour
         }
         
         OnInventoryChanged?.Invoke();
-        Debug.Log($"[InventorySystem] Added {quantity}x {item.itemName}");
+        Debug.Log($"[InventorySystem] Added {quantity:F2}x {item.itemName}");
         return true;
     }
     
@@ -138,7 +138,7 @@ public class InventorySystem : MonoBehaviour
     /// <summary>
     /// Remove um item do inventário
     /// </summary>
-    public bool RemoveItem(ItemData item, int quantity = 1)
+    public bool RemoveItem(ItemData item, float quantity = 1f)
     {
         if (!HasItem(item, quantity))
         {
@@ -146,29 +146,29 @@ public class InventorySystem : MonoBehaviour
             return false;
         }
         
-        int remaining = quantity;
+        float remaining = quantity;
         
         // Remove de trás para frente para evitar problemas
-        for (int i = slots.Count - 1; i >= 0 && remaining > 0; i--)
+        for (int i = slots.Count - 1; i >= 0 && remaining > 0.0001f; i--)
         {
             var slot = slots[i];
             if (slot.Item != item) continue;
             
-            int removed = slot.RemoveQuantity(remaining);
+            float removed = slot.RemoveQuantity(remaining);
             remaining -= removed;
             
             OnItemRemoved?.Invoke(slot);
         }
         
         OnInventoryChanged?.Invoke();
-        Debug.Log($"[InventorySystem] Removed {quantity}x {item.itemName}");
+        Debug.Log($"[InventorySystem] Removed {quantity:F2}x {item.itemName}");
         return true;
     }
     
     /// <summary>
     /// Remove item de um slot específico
     /// </summary>
-    public bool RemoveFromSlot(int slotIndex, int quantity = 1)
+    public bool RemoveFromSlot(int slotIndex, float quantity = 1f)
     {
         var slot = GetSlot(slotIndex);
         if (slot == null || slot.IsEmpty) return false;
@@ -207,8 +207,8 @@ public class InventorySystem : MonoBehaviour
         // Caso 2: Mesmo item e stackable - tenta empilhar
         else if (fromSlot.Item == toSlot.Item && toSlot.Item.isStackable)
         {
-            int spaceLeft = toSlot.Item.maxStackSize - toSlot.Quantity;
-            int toMove = Mathf.Min(fromSlot.Quantity, spaceLeft);
+            float spaceLeft = toSlot.Item.maxStackSize - toSlot.Quantity;
+            float toMove = Mathf.Min(fromSlot.Quantity, spaceLeft);
             
             toSlot.AddQuantity(toMove);
             fromSlot.RemoveQuantity(toMove);
@@ -217,7 +217,7 @@ public class InventorySystem : MonoBehaviour
         else
         {
             var tempItem = toSlot.Item;
-            var tempQuantity = toSlot.Quantity;
+            float tempQuantity = toSlot.Quantity;
             
             toSlot.SetItem(fromSlot.Item, fromSlot.Quantity);
             fromSlot.SetItem(tempItem, tempQuantity);
@@ -240,9 +240,9 @@ public class InventorySystem : MonoBehaviour
         
         if (fromSlot == null || toSlot == null) return false;
         if (fromSlot.IsEmpty || !toSlot.IsEmpty) return false;
-        if (fromSlot.Quantity <= 1) return false;
+        if (fromSlot.Quantity <= 0.0001f) return false;
         
-        int half = fromSlot.Quantity / 2;
+        float half = fromSlot.Quantity / 2f;
         
         toSlot.SetItem(fromSlot.Item, half);
         fromSlot.RemoveQuantity(half);
@@ -260,17 +260,17 @@ public class InventorySystem : MonoBehaviour
     /// <summary>
     /// Verifica se tem um item
     /// </summary>
-    public bool HasItem(ItemData item, int quantity = 1)
+    public bool HasItem(ItemData item, float quantity = 1f)
     {
-        return GetItemCount(item) >= quantity;
+        return GetItemCount(item) >= quantity - 0.0001f;
     }
     
     /// <summary>
     /// Retorna quantidade total de um item
     /// </summary>
-    public int GetItemCount(ItemData item)
+    public float GetItemCount(ItemData item)
     {
-        int count = 0;
+        float count = 0;
         foreach (var slot in slots)
         {
             if (slot.Item == item)

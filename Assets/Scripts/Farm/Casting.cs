@@ -53,7 +53,8 @@ public class Casting : MonoBehaviour
     private bool canCatch;
 
     // Componentes
-    private PlayerItens playerItens;
+    private Player player;
+    private InventorySystem inventory;
     private PlayerAnim playerAnim;
     private ProgressBar progressBar;
     private AudioSource audioSource;
@@ -76,18 +77,20 @@ public class Casting : MonoBehaviour
 
     private void Start()
     {
-        playerItens = FindObjectOfType<PlayerItens>();
-        if (playerItens == null)
+        player = FindObjectOfType<Player>();
+        inventory = FindObjectOfType<InventorySystem>();
+
+        if (player == null || inventory == null)
         {
-            Debug.LogError("Casting: PlayerItens não encontrado!");
+            Debug.LogError("Casting: Player ou InventorySystem não encontrado!");
             enabled = false;
             return;
         }
 
-        playerAnim = playerItens.GetComponent<PlayerAnim>();
+        playerAnim = player.GetComponent<PlayerAnim>();
         if (playerAnim == null)
         {
-            Debug.LogWarning("Casting: PlayerAnim não encontrado.");
+            Debug.LogWarning("Casting: PlayerAnim não encontrado no Player.");
         }
 
         CreateProgressBar();
@@ -111,10 +114,10 @@ public class Casting : MonoBehaviour
 
     private void CreateProgressBar()
     {
-        if (!showProgressBar)
+        if (!showProgressBar || player == null)
             return;
 
-        progressBar = ProgressBar.Create(playerItens.transform, progressBarOffset);
+        progressBar = ProgressBar.Create(player.transform, progressBarOffset);
         progressBar.SetColors(waitingColor, successColor, new Color(0, 0, 0, 0.7f));
         progressBar.Hide();
     }
@@ -362,7 +365,7 @@ public class Casting : MonoBehaviour
 
     private void SpawnFish()
     {
-        if (fishPrefab == null || playerItens == null)
+        if (fishPrefab == null || player == null)
             return;
 
         Vector3 offset = new Vector3(
@@ -371,7 +374,7 @@ public class Casting : MonoBehaviour
             0f
         );
 
-        GameObject fish = Instantiate(fishPrefab, playerItens.transform.position + offset, Quaternion.identity);
+        GameObject fish = Instantiate(fishPrefab, player.transform.position + offset, Quaternion.identity);
 
         Fish fishComponent = fish.GetComponent<Fish>();
         if (fishComponent != null)

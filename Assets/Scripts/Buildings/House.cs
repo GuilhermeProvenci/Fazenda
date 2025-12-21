@@ -32,8 +32,10 @@ public class House : MonoBehaviour
     [SerializeField] private AudioClip hammerSound;
     [SerializeField] private AudioClip completeSound;
 
-    //[Header("UI")]
-    //[SerializeField] private GameObject promptUI;
+    [Header("Requirements Info")]
+    [SerializeField] private ItemData woodItem;
+
+    // ... (existing serialized fields) ...
 
     // Estado
     private bool detectingPlayer;
@@ -44,7 +46,7 @@ public class House : MonoBehaviour
     // Componentes
     private Player player;
     private PlayerAnim playerAnim;
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private AudioSource audioSource;
     private ProgressBar progressBar;
 
@@ -70,11 +72,11 @@ public class House : MonoBehaviour
     private void Start()
     {
         player = FindObjectOfType<Player>();
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (player == null || inventory == null)
         {
-            Debug.LogError("[House] Player ou InventoryController não encontrado!");
+            Debug.LogError("[House] Player ou InventorySystem não encontrado!");
             enabled = false;
             return;
         }
@@ -83,9 +85,6 @@ public class House : MonoBehaviour
 
         CreateProgressBar();
         InitializeVisual();
-
-        //if (promptUI != null)
-        //promptUI.SetActive(false);
     }
 
     private void Update()
@@ -139,12 +138,13 @@ public class House : MonoBehaviour
 
     private void TryStartBuild()
     {
-        if (isBuilding || isBuilt)
+        if (isBuilding || isBuilt || woodItem == null)
             return;
 
-        if (!inventory.Has(ItemType.Wood, woodAmount))
+        float currentWood = inventory.GetItemCount(woodItem);
+        if (currentWood < woodAmount)
         {
-            Debug.Log($"[House] Madeira insuficiente {inventory.Get(ItemType.Wood)}/{woodAmount}");
+            Debug.Log($"[House] Madeira insuficiente {currentWood:F0}/{woodAmount}");
             return;
         }
 
@@ -156,7 +156,7 @@ public class House : MonoBehaviour
         isBuilding = true;
         timeCount = 0f;
 
-        if (!inventory.Remove(ItemType.Wood, woodAmount))
+        if (!inventory.RemoveItem(woodItem, (float)woodAmount))
         {
             Debug.LogError("[House] Remove falhou, cancelando construção!");
             isBuilding = false;
@@ -234,12 +234,12 @@ public class House : MonoBehaviour
 
     private void UpdateVisualFeedback()
     {
-        if (!detectingPlayer || !showColorFeedback)
+        if (!detectingPlayer || !showColorFeedback || woodItem == null)
             return;
 
         if (houseSprite != null)
         {
-            bool canBuild = inventory.Has(ItemType.Wood, woodAmount);
+            bool canBuild = inventory.GetItemCount(woodItem) >= woodAmount;
 
             Color target = canBuild ? canBuildColor : cannotBuildColor;
             houseSprite.color = Color.Lerp(houseSprite.color, target, Time.deltaTime * 5f);
@@ -258,13 +258,17 @@ public class House : MonoBehaviour
         {
             detectingPlayer = true;
 
-            bool canBuild = inventory.Has(ItemType.Wood, woodAmount);
+            if (woodItem != null)
+            {
+                bool canBuild = inventory.GetItemCount(woodItem) >= woodAmount;
+                float currentWood = inventory.GetItemCount(woodItem);
 
-            string msg = canBuild
-                ? $"Pressione {buildKey} para construir ({woodAmount} madeira)"
-                : $"Madeira insuficiente ({inventory.Get(ItemType.Wood)}/{woodAmount})";
+                string msg = canBuild
+                    ? $"Pressione {buildKey} para construir ({woodAmount} madeira)"
+                    : $"Madeira insuficiente ({currentWood:F0}/{woodAmount})";
 
-            Debug.Log("[House] " + msg);
+                Debug.Log("[House] " + msg);
+            }
         }
     }
 
@@ -317,9 +321,9 @@ public class House : MonoBehaviour
     [ContextMenu("Force Build")]
     private void DebugForceBuild()
     {
-        if (Application.isPlaying && !isBuilt)
+        if (Application.isPlaying && !isBuilt && woodItem != null)
         {
-            inventory.Add(ItemType.Wood, woodAmount);
+            inventory.AddItem(woodItem, (float)woodAmount);
             timeCount = timeAmount;
             TryStartBuild();
         }

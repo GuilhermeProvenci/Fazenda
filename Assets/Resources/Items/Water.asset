@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af4d4d3f19d88848bc2764ee94d5364, type: 3}
+  m_Name: Water
+  m_EditorClassIdentifier: 
+  itemName: Water
+  itemID: Water
+  description: Fresh water
+  icon: {fileID: 1544317307, guid: 3869c7a0bb72bda46abe2d8aeaee5f56, type: 3}
+  worldPrefab: {fileID: 0}
+  category: 0
+  isStackable: 1
+  maxStackSize: 100
+  weight: 1
+  sellPrice: 0
+  buyPrice: 0
+  legacyType: 3
+  isRenewable: 1
+  respawnTime: 0
+  quality: 1

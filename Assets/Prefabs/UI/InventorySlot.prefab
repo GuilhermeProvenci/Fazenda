@@ -220,7 +220,8 @@ GameObject:
   - component: {fileID: 8553760446730054521}
   - component: {fileID: 8674266421466455535}
   - component: {fileID: 8975371749776485254}
-  - component: {fileID: 8784867227555221700}
+  - component: {fileID: 7471647965600924966}
+  - component: {fileID: -136759626620548448}
   m_Layer: 5
   m_Name: InventorySlot
   m_TagString: Untagged
@@ -288,7 +289,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8784867227555221700
+--- !u!114 &7471647965600924966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -297,16 +298,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 4348122966690364772}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff6696ee3fda7d04b9f628a169c2a615, type: 3}
+  m_Script: {fileID: 11500000, guid: 280498f699c24214db83cf7006cf4995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundImage: {fileID: 8975371749776485254}
   iconImage: {fileID: 8150849133827594775}
   quantityText: {fileID: 2756359216637224684}
-  nameText: {fileID: 3631478392002895745}
-  emptyColor: {r: 1, g: 1, b: 1, a: 1}
-  filledColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  nameText: {fileID: 0}
+  backgroundImage: {fileID: 8975371749776485254}
+  selectionHighlight: {fileID: 0}
+  normalColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.8}
+  highlightColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.9}
+  emptyColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.5}
+  selectedColor: {r: 0.5, g: 0.5, b: 0, a: 1}
+--- !u!114 &-136759626620548448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4348122966690364772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b1bc06880128b44b50a369b47c27a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  raycaster: {fileID: 0}
+  dragAlpha: 0.6
 --- !u!1 &4545678411400431679
 GameObject:
   m_ObjectHideFlags: 0

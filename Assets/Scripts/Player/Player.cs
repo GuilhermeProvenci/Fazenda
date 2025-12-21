@@ -21,12 +21,15 @@ public class Player : MonoBehaviour
     [Header("Watering")]
     [SerializeField] private float waterConsumptionRate = 0.5f;
 
+    [Header("Inventory")]
+    private ItemData waterItem;
+
     // ------------------------------
     // COMPONENTS
     // ------------------------------
     private HudController hud;
     private Rigidbody2D rig;
-    private InventoryController inventory;
+    private InventorySystem inventory;
 
     // ------------------------------
     // ESTADOS
@@ -52,13 +55,18 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rig = GetComponent<Rigidbody2D>();
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (rig == null)
             Debug.LogError("Player: Rigidbody2D não encontrado!");
 
         if (inventory == null)
-            Debug.LogError("Player: InventoryController não encontrado!");
+            Debug.LogError("Player: InventorySystem não encontrado!");
+
+        // Inicializa itens automaticamente via Registry
+        waterItem = ItemRegistry.GetItem("Water");
+        if (waterItem == null)
+            Debug.LogWarning("Player: Item 'Water' não encontrado no Registro!");
 
         currentSpeed = walkSpeed;
     }
@@ -135,7 +143,7 @@ public class Player : MonoBehaviour
             case ToolType.Axe:
                 StartCutting();
                 break;
-
+ 
             case ToolType.Shovel:
                 StartDigging();
                 break;
@@ -169,7 +177,13 @@ public class Player : MonoBehaviour
 
     void StartWatering()
     {
-        if (inventory.Get(ItemType.Water) > 0)
+        if (waterItem == null)
+        {
+            Debug.LogWarning("Player: waterItem não atribuído no Inspector!");
+            return;
+        }
+
+        if (inventory.GetItemCount(waterItem) > 0)
         {
             currentAction = PlayerAction.Watering;
             currentSpeed = 0;
@@ -192,12 +206,12 @@ public class Player : MonoBehaviour
             rig.MovePosition(rig.position + direction * finalSpeed * Time.fixedDeltaTime);
         }
 
-        // Agora usando InventoryController
-        if (currentAction == PlayerAction.Watering)
+        // Agora usando InventorySystem e ItemData
+        if (currentAction == PlayerAction.Watering && waterItem != null)
         {
             float waterToConsume = waterConsumptionRate * Time.fixedDeltaTime;
 
-            if (!inventory.Remove(ItemType.Water, waterToConsume))
+            if (!inventory.RemoveItem(waterItem, waterToConsume))
             {
                 StopAction();
                 Debug.Log("Água acabou!");

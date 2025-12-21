@@ -11,6 +11,7 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [Header("UI References")]
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI quantityText;
+    [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private GameObject selectionHighlight;
     
@@ -59,6 +60,9 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             if (quantityText != null)
                 quantityText.text = "";
             
+            if (nameText != null)
+                nameText.text = "";
+            
             if (backgroundImage != null)
                 backgroundImage.color = emptyColor;
             
@@ -74,7 +78,12 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         
         if (quantityText != null)
         {
-            quantityText.text = slotData.Quantity > 1 ? slotData.Quantity.ToString() : "";
+            quantityText.text = slotData.Quantity > 1.0001f ? slotData.Quantity.ToString("F0") : "";
+        }
+        
+        if (nameText != null)
+        {
+            nameText.text = slotData.Item.itemName;
         }
         
         if (backgroundImage != null)
@@ -93,7 +102,7 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         isHovered = true;
         
-        if (!slotData.IsEmpty && backgroundImage != null)
+        if (slotData != null && !slotData.IsEmpty && backgroundImage != null)
         {
             backgroundImage.color = highlightColor;
         }
@@ -108,9 +117,10 @@ public class UISlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         
         if (backgroundImage != null)
         {
-            backgroundImage.color = isSelected ? selectedColor :
-                                    slotData.IsEmpty ? emptyColor : 
-                                    normalColor;
+            if (slotData == null || slotData.IsEmpty)
+                backgroundImage.color = emptyColor;
+            else
+                backgroundImage.color = isSelected ? selectedColor : normalColor;
         }
         
         // TODO: Esconder tooltip

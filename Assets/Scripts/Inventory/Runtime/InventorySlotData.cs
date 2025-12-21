@@ -7,16 +7,16 @@ using UnityEngine;
 public class InventorySlotData
 {
     [SerializeField] private ItemData item;
-    [SerializeField] private int quantity;
+    [SerializeField] private float quantity;
     [SerializeField] private int slotIndex;
     
     // Propriedades públicas
     public ItemData Item => item;
-    public int Quantity => quantity;
+    public float Quantity => quantity;
     public int SlotIndex => slotIndex;
     
-    public bool IsEmpty => item == null || quantity <= 0;
-    public bool IsFull => item != null && quantity >= item.maxStackSize;
+    public bool IsEmpty => item == null || quantity <= 0.0001f;
+    public bool IsFull => item != null && quantity >= item.maxStackSize - 0.0001f;
     
     // ---------------------------
     // CONSTRUTOR
@@ -36,7 +36,7 @@ public class InventorySlotData
     /// <summary>
     /// Verifica se pode adicionar um item neste slot
     /// </summary>
-    public bool CanAddItem(ItemData newItem, int amount = 1)
+    public bool CanAddItem(ItemData newItem, float amount = 1f)
     {
         if (newItem == null) return false;
         
@@ -50,18 +50,18 @@ public class InventorySlotData
         if (!item.isStackable) return false;
         
         // Verifica se não excede o máximo
-        return quantity + amount <= item.maxStackSize;
+        return quantity + amount <= item.maxStackSize + 0.0001f;
     }
     
     /// <summary>
     /// Adiciona quantidade ao slot
     /// </summary>
-    public int AddQuantity(int amount)
+    public float AddQuantity(float amount)
     {
         if (item == null) return 0;
         
-        int spaceLeft = item.maxStackSize - quantity;
-        int toAdd = Mathf.Min(amount, spaceLeft);
+        float spaceLeft = item.maxStackSize - quantity;
+        float toAdd = Mathf.Min(amount, spaceLeft);
         
         quantity += toAdd;
         return toAdd; // Retorna quanto foi realmente adicionado
@@ -70,12 +70,12 @@ public class InventorySlotData
     /// <summary>
     /// Remove quantidade do slot
     /// </summary>
-    public int RemoveQuantity(int amount)
+    public float RemoveQuantity(float amount)
     {
-        int toRemove = Mathf.Min(amount, quantity);
+        float toRemove = Mathf.Min(amount, quantity);
         quantity -= toRemove;
         
-        if (quantity <= 0)
+        if (quantity <= 0.0001f)
         {
             Clear();
         }
@@ -86,7 +86,7 @@ public class InventorySlotData
     /// <summary>
     /// Define o item e quantidade do slot
     /// </summary>
-    public void SetItem(ItemData newItem, int newQuantity)
+    public void SetItem(ItemData newItem, float newQuantity)
     {
         item = newItem;
         quantity = newQuantity;
@@ -126,6 +126,6 @@ public class InventorySlotData
         if (IsEmpty)
             return $"Slot {slotIndex}: Empty";
         
-        return $"Slot {slotIndex}: {item.itemName} x{quantity}";
+        return $"Slot {slotIndex}: {item.itemName} x{quantity:F2}";
     }
 }

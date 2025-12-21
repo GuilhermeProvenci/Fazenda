@@ -1734,7 +1734,6 @@ GameObject:
   - component: {fileID: 303591433}
   - component: {fileID: 303591432}
   - component: {fileID: 303591431}
-  - component: {fileID: 303591435}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1829,24 +1828,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &303591435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 303591430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cac8d351619b66d4abe2afdd515357eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventoryUI: {fileID: 64209988}
-  itemsGrid: {fileID: 159575595}
-  slotPrefab: {fileID: 4348122966690364772, guid: 5d3eb45fd650cd845a01de1b4b098548, type: 3}
-  itemDatabase: {fileID: 0}
-  showEmptySlots: 1
-  useDatabase: 1
 --- !u!1 &304153965
 GameObject:
   m_ObjectHideFlags: 0
@@ -4055,7 +4036,7 @@ GameObject:
   - component: {fileID: 380775725}
   - component: {fileID: 380775726}
   m_Layer: 0
-  m_Name: Hud Controler
+  m_Name: Hud Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4088,6 +4069,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28cf6ee376ad2bc4c93e7cdae79e6d54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waterItem: {fileID: 11400000, guid: 0b50b85d788372e41bcd2fe6e5dafd81, type: 2}
+  woodItem: {fileID: 11400000, guid: c04cfc2f34fe3a443954db8413ddb4a5, type: 2}
+  carrotItem: {fileID: 0}
+  fishItem: {fileID: 11400000, guid: c47a5caa7ce5b5648b735af94dd6f49d, type: 2}
   waterUIBar: {fileID: 1261706965}
   woodUIBar: {fileID: 436319235}
   carrotUIBar: {fileID: 1634985099}
@@ -4102,9 +4087,7 @@ MonoBehaviour:
   - {fileID: 910929360}
   selectColor: {r: 1, g: 1, b: 1, a: 1}
   alphaColor: {r: 1, g: 1, b: 1, a: 0.48235294}
-  selectedScale: 1.2
   animateSelection: 1
-  showChangeAnimation: 1
   animationSpeed: 5
   showLowWarning: 1
   lowThreshold: 0.2
@@ -13694,6 +13677,7 @@ MonoBehaviour:
   runSpeed: 10
   equippedTool: 0
   waterConsumptionRate: 0.5
+  waterItem: {fileID: 11400000, guid: 0b50b85d788372e41bcd2fe6e5dafd81, type: 2}
   isPaused: 0
   isRunning: 0
   currentAction: 0
@@ -49639,6 +49623,7 @@ MonoBehaviour:
   showColorFeedback: 1
   hammerSound: {fileID: 0}
   completeSound: {fileID: 0}
+  woodItem: {fileID: 0}
 --- !u!1 &1445414554
 GameObject:
   m_ObjectHideFlags: 0
@@ -50324,6 +50309,7 @@ MonoBehaviour:
   waterSprite: {fileID: 0}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   collectingColor: {r: 0, g: 1, b: 1, a: 1}
+  waterItem: {fileID: 0}
 --- !u!61 &1537368099
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -57009,7 +56995,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2033623861}
-  - component: {fileID: 2033623860}
+  - component: {fileID: 2033623862}
+  - component: {fileID: 2033623863}
+  - component: {fileID: 2033623864}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -57017,18 +57005,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2033623860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2033623859}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9123c328476c1f3419e929653a94e940, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2033623861
 Transform:
   m_ObjectHideFlags: 0
@@ -57044,6 +57020,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2033623862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033623859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae0a79212cb33d4aa52e121793a863c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSlots: 10
+  autoExpand: 0
+  slots: []
+--- !u!114 &2033623863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033623859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9123c328476c1f3419e929653a94e940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newInventory: {fileID: 0}
+  itemMappings: []
+--- !u!114 &2033623864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033623859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14aa8fe52c3e708469e339a66b62bae8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: {fileID: 2033623862}
+  inventoryPanel: {fileID: 64209988}
+  slotsContainer: {fileID: 159575595}
+  slotPrefab: {fileID: 4348122966690364772, guid: 5d3eb45fd650cd845a01de1b4b098548, type: 3}
+  toggleKey: 9
+  pauseGameWhenOpen: 0
+  slotsPerRow: 5
+  slotSpacing: 10
 --- !u!1 &2046442155
 GameObject:
   m_ObjectHideFlags: 0
@@ -57737,11 +57762,13 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
+  - {fileID: 1332396374}
   - {fileID: 1155482148}
   - {fileID: 392097973}
-  - {fileID: 1332396374}
   - {fileID: 93663331}
+  - {fileID: 1923258868}
   - {fileID: 1383753594}
+  - {fileID: 2033623861}
   - {fileID: 380775725}
   - {fileID: 303591434}
   - {fileID: 1772757519}
@@ -57750,7 +57777,5 @@ SceneRoots:
   - {fileID: 1051751174}
   - {fileID: 1445414555}
   - {fileID: 801081231}
-  - {fileID: 1923258868}
   - {fileID: 1425328841}
   - {fileID: 1530891532}
-  - {fileID: 2033623861}

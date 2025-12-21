@@ -194,20 +194,24 @@ public class InventoryUI : MonoBehaviour
     
     private void ClearSlots()
     {
-        foreach (var slot in uiSlots)
-        {
-            if (slot != null)
-                Destroy(slot.gameObject);
-        }
-        
+        // Limpa a lista interna
         uiSlots.Clear();
+        
+        // Destrói TODOS os filhos físicos no container (segurança extra)
+        if (slotsContainer != null)
+        {
+            foreach (Transform child in slotsContainer)
+            {
+                Destroy(child.gameObject);
+            }
+        }
     }
     
     // ---------------------------
     // REFRESH
     // ---------------------------
     
-    private void RefreshUI()
+    public void RefreshUI()
     {
         var allSlots = inventory.GetAllSlots();
         

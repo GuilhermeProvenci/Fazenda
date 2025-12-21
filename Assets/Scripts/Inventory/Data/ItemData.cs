@@ -49,8 +49,8 @@ public abstract class ItemData : ScriptableObject
     public int buyPrice = 20;
     
     [Header("Legacy Compatibility")]
-    [Tooltip("Tipo do item no sistema antigo (para compatibilidade)")]
-    public ItemType legacyType;
+    [Tooltip("ID numérico para compatibilidade com sistema legado")]
+    public int legacyID;
     
     // ---------------------------
     // MÉTODOS VIRTUAIS

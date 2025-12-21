@@ -144,3 +144,4 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   highlightColor: {r: 0.7310122, g: 1, b: 0.7122642, a: 1}
   collectSound: {fileID: 0}
+  woodItem: {fileID: 11400000, guid: c04cfc2f34fe3a443954db8413ddb4a5, type: 2}

@@ -31,8 +31,11 @@ public class Fish : MonoBehaviour
     private Vector3 startPosition;
     private float spawnTime;
 
+    [Header("Inventory")]
+    private ItemData fishItem;
+
     // Componentes
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private AudioSource audioSource;
 
     // ---------------------------
@@ -51,14 +54,17 @@ public class Fish : MonoBehaviour
 
     private void Start()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (inventory == null)
         {
-            Debug.LogError("Fish: InventoryController não encontrado!");
+            Debug.LogError("Fish: InventorySystem não encontrado!");
             Destroy(gameObject);
             return;
         }
+
+        // Inicializa item via Registry
+        fishItem = ItemRegistry.GetItem("Fish");
 
         startPosition = transform.position;
         spawnTime = Time.time;
@@ -100,7 +106,10 @@ public class Fish : MonoBehaviour
 
     private void CollectFish()
     {
-        if (inventory.Add(ItemType.Fish, fishValue))
+        if (inventory == null || fishItem == null)
+            return;
+
+        if (inventory.AddItem(fishItem, (float)fishValue))
         {
             PlayCollectSound();
             Debug.Log($"[Fish] Coletado! +{fishValue} peixe(s)");

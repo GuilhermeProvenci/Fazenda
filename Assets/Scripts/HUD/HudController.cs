@@ -4,10 +4,16 @@ using TMPro;
 using System.Collections.Generic;
 
 /// <summary>
-/// Controlador do HUD baseado em InventoryController
+/// Controlador do HUD baseado em InventorySystem
 /// </summary>
 public class HudController : MonoBehaviour
 {
+    [Header("Item Definitions")]
+    private ItemData waterItem;
+    private ItemData woodItem;
+    private ItemData carrotItem;
+    private ItemData fishItem;
+
     [Header("Item Bars")]
     [SerializeField] private Image waterUIBar;
     [SerializeField] private Image woodUIBar;
@@ -24,11 +30,9 @@ public class HudController : MonoBehaviour
     [SerializeField] private List<Image> toolsUI = new();
     [SerializeField] private Color selectColor = Color.white;
     [SerializeField] private Color alphaColor = new(1, 1, 1, 0.3f);
-    [SerializeField] private float selectedScale = 0.5f;
     [SerializeField] private bool animateSelection = true;
 
     [Header("Visual Feedback")]
-    [SerializeField] private bool showChangeAnimation = true;
     [SerializeField] private float animationSpeed = 5f;
 
     [Header("Low Resource Warning")]
@@ -38,7 +42,7 @@ public class HudController : MonoBehaviour
     [SerializeField] private float warningBlinkSpeed = 2f;
 
     // Componentes
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private Player player;
 
     // Cache para animações
@@ -52,15 +56,21 @@ public class HudController : MonoBehaviour
 
     private void Awake()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
         player = FindObjectOfType<Player>();
 
         if (inventory == null)
         {
-            Debug.LogError("HUD: InventoryController não encontrado!");
+            Debug.LogError("HUD: InventorySystem não encontrado!");
             enabled = false;
             return;
         }
+
+        // Inicializa itens via Registry
+        waterItem = ItemRegistry.GetItem("Water");
+        woodItem = ItemRegistry.GetItem("Wood");
+        carrotItem = ItemRegistry.GetItem("Carrot");
+        fishItem = ItemRegistry.GetItem("Fish");
     }
 
     private void Start()
@@ -100,12 +110,20 @@ public class HudController : MonoBehaviour
 
     private void UpdateItemBars()
     {
-        targetWater = inventory.GetPercentage(ItemType.Water);
-        targetWood = inventory.GetPercentage(ItemType.Wood);
-        targetCarrot = inventory.GetPercentage(ItemType.Carrot);
-        targetFish = inventory.GetPercentage(ItemType.Fish);
+        targetWater = GetItemPercentage(waterItem);
+        targetWood = GetItemPercentage(woodItem);
+        targetCarrot = GetItemPercentage(carrotItem);
+        targetFish = GetItemPercentage(fishItem);
 
         UpdateItemTexts();
+    }
+
+    private float GetItemPercentage(ItemData item)
+    {
+        if (item == null) return 0;
+        float current = inventory.GetItemCount(item);
+        float limit = item.maxStackSize;
+        return limit > 0 ? current / limit : 0;
     }
 
     private void AnimateBars()
@@ -130,17 +148,21 @@ public class HudController : MonoBehaviour
 
     private void UpdateItemTexts()
     {
-        if (waterText != null)
-            waterText.text = $"{inventory.Get(ItemType.Water):F0}/{inventory.GetLimit(ItemType.Water)}";
+        UpdateText(waterText, waterItem);
+        UpdateText(woodText, woodItem);
+        UpdateText(carrotText, carrotItem);
+        UpdateText(fishText, fishItem);
+    }
 
-        if (woodText != null)
-            woodText.text = $"{inventory.Get(ItemType.Wood)}/{inventory.GetLimit(ItemType.Wood)}";
-
-        if (carrotText != null)
-            carrotText.text = $"{inventory.Get(ItemType.Carrot)}/{inventory.GetLimit(ItemType.Carrot)}";
-
-        if (fishText != null)
-            fishText.text = $"{inventory.Get(ItemType.Fish)}/{inventory.GetLimit(ItemType.Fish)}";
+    private void UpdateText(TextMeshProUGUI textComp, ItemData item)
+    {
+        if (textComp == null) return;
+        if (item == null)
+        {
+            textComp.text = "0/0";
+            return;
+        }
+        textComp.text = $"{inventory.GetItemCount(item):F0}/{item.maxStackSize}";
     }
 
     // --------------------------

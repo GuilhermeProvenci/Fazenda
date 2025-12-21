@@ -31,8 +31,11 @@ public class Wood : MonoBehaviour
     private bool isMoving = true;
     private bool playerNearby;
 
+    [Header("Inventory")]
+    private ItemData woodItem;
+
     // Componentes
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private AudioSource audioSource;
 
     // ---------------------------
@@ -51,10 +54,13 @@ public class Wood : MonoBehaviour
 
     private void Start()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (inventory == null)
-            Debug.LogWarning("Wood: InventoryController não encontrado!");
+            Debug.LogWarning("Wood: InventorySystem não encontrado!");
+
+        // Inicializa item via Registry
+        woodItem = ItemRegistry.GetItem("Wood");
 
         Destroy(gameObject, lifetime); // autodestruição
     }
@@ -105,10 +111,10 @@ public class Wood : MonoBehaviour
 
     private void CollectWood()
     {
-        if (inventory == null)
+        if (inventory == null || woodItem == null)
             return;
 
-        if (inventory.Add(ItemType.Wood, woodValue))
+        if (inventory.AddItem(woodItem, (float)woodValue))
         {
             PlayCollectSound();
 

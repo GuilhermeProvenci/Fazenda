@@ -106,6 +106,8 @@ MonoBehaviour:
   growthColor: {r: 0, g: 1, b: 0, a: 1}
   digSound: {fileID: 8300000, guid: 10211ca16f438a042b904d89a0a4f0d9, type: 3}
   harvestSound: {fileID: 0}
+  waterItem: {fileID: 11400000, guid: 0b50b85d788372e41bcd2fe6e5dafd81, type: 2}
+  carrotItem: {fileID: 0}
 --- !u!1 &2233879300257627176
 GameObject:
   m_ObjectHideFlags: 0

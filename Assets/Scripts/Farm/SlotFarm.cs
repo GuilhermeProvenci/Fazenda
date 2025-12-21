@@ -38,8 +38,12 @@ public class SlotFarm : MonoBehaviour
     private bool isWatering;
     private bool isGrown;
 
+    [Header("Inventory")]
+    private ItemData waterItem;
+    private ItemData carrotItem;
+
     // Componentes
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private ProgressBar progressBar;
     private AudioSource audioSource;
 
@@ -74,14 +78,18 @@ public class SlotFarm : MonoBehaviour
 
     private void Start()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (inventory == null)
         {
-            Debug.LogError("SlotFarm: InventoryController não encontrado!");
+            Debug.LogError("SlotFarm: InventorySystem não encontrado!");
             enabled = false;
             return;
         }
+
+        // Inicializa itens via Registry
+        waterItem = ItemRegistry.GetItem("Water");
+        carrotItem = ItemRegistry.GetItem("Carrot");
 
         InitializeSlot();
         CreateProgressBar();
@@ -194,17 +202,19 @@ public class SlotFarm : MonoBehaviour
 
     private void UpdateWatering()
     {
-        if (!isWatering || !holeDug || isGrown)
+        if (!isWatering || !holeDug || isGrown || waterItem == null)
             return;
 
         currentState = FarmState.Watering;
 
-        if (!inventory.Has(ItemType.Water, wateringSpeed * Time.deltaTime))
+        float wateringAmount = wateringSpeed * Time.deltaTime;
+
+        if (inventory.GetItemCount(waterItem) < wateringAmount)
             return;
 
-        if (inventory.Remove(ItemType.Water, wateringSpeed * Time.deltaTime))
+        if (inventory.RemoveItem(waterItem, wateringAmount))
         {
-            waterCounter += wateringSpeed * Time.deltaTime;
+            waterCounter += wateringAmount;
             waterCounter = Mathf.Min(waterCounter, waterRequired);
         }
     }
@@ -251,10 +261,10 @@ public class SlotFarm : MonoBehaviour
 
     private void Harvest()
     {
-        if (!isGrown)
+        if (!isGrown || carrotItem == null)
             return;
 
-        if (inventory.Add(ItemType.Carrot, 1))
+        if (inventory.AddItem(carrotItem, 1f))
         {
             PlaySFX(harvestSound);
             ResetSlot();

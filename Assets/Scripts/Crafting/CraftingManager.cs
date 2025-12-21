@@ -25,7 +25,7 @@ public class CraftingManager : MonoBehaviour
     [SerializeField] private AudioClip craftSound;
     [SerializeField] private AudioClip failSound;
 
-    private InventoryController inventory;
+    private InventorySystem inventory;
     private AudioSource audioSource;
     private bool isNearWorkbench = false;
     private bool menuOpen = false;
@@ -49,19 +49,41 @@ public class CraftingManager : MonoBehaviour
 
     private void Start()
     {
-        inventory = FindObjectOfType<InventoryController>();
+        inventory = FindObjectOfType<InventorySystem>();
 
         if (inventory == null)
         {
-            Debug.LogError("CraftingManager: InventoryController não encontrado!");
-            enabled = false;
-            return;
+            inventory = GetComponent<InventorySystem>();
+            if (inventory == null)
+            {
+                Debug.LogError("CraftingManager: InventorySystem não encontrado!");
+                enabled = false;
+                return;
+            }
         }
+
+        // Carrega receitas automaticamente
+        LoadAllRecipes();
 
         if (craftingUI != null)
             craftingUI.gameObject.SetActive(false);
 
+        if (craftingGrid == null)
+            Debug.LogWarning("[CraftingManager] Crafting Grid não está atribuído no Inspector! As receitas podem não aparecer.");
+
         Debug.Log($"[CraftingManager] Carregadas {allRecipes.Count} receitas");
+    }
+
+    private void LoadAllRecipes()
+    {
+        // Limpa a lista atual para evitar duplicatas se já houver algo manual
+        allRecipes.Clear();
+        
+        CraftingRecipe[] recipes = Resources.LoadAll<CraftingRecipe>("Recipes");
+        allRecipes.AddRange(recipes);
+        
+        if (allRecipes.Count == 0)
+            Debug.LogWarning("[CraftingManager] Nenhuma receita encontrada em Resources/Recipes!");
     }
 
     private void Update()
@@ -81,18 +103,13 @@ public class CraftingManager : MonoBehaviour
 
     public void ToggleCraftingMenu()
     {
-        if (craftingUI != null)
-        {
-            Debug.Log("[CraftingManager] Toggle Crafting UI");
-            craftingUI.Toggle();
-        }
-        else
-        {
-            // Fallback para sistema antigo
-            menuOpen = !menuOpen;
-            if (craftingUI != null)
-                craftingUI.gameObject.SetActive(menuOpen);
-        }
+        if (craftingUI == null) return;
+
+        // Fecha inventário para não sobrepor
+        FindObjectOfType<InventoryUI>()?.Close();
+
+        Debug.Log("[CraftingManager] Toggle Crafting UI");
+        craftingUI.Toggle();
     }
 
     // ---------------------------
@@ -119,12 +136,19 @@ public class CraftingManager : MonoBehaviour
         // Ingredientes
         if (!recipe.CanCraft(inventory))
         {
-            string missing = recipe.GetMissingIngredientsText(inventory);
-            FailCraft($"Ingredientes insuficientes:\n{missing}");
+            if (recipe.Ingredients == null || recipe.Ingredients.Length == 0)
+            {
+                FailCraft("Receita inválida: não possui ingredientes configurados!");
+            }
+            else
+            {
+                string missing = recipe.GetMissingIngredientsText(inventory);
+                FailCraft($"Ingredientes insuficientes:\n{missing}");
+            }
             return false;
         }
 
-        // Consumir ingredientes
+        // Consumir ingredientes (Sempre consome se o craft for possível)
         if (!recipe.ConsumeIngredients(inventory))
         {
             FailCraft("Erro ao consumir ingredientes!");
@@ -132,7 +156,13 @@ public class CraftingManager : MonoBehaviour
         }
 
         // Adiciona item craftado ao inventário
-        inventory.Add(recipe.ResultItemType, recipe.ResultAmount);
+        if (recipe.ResultItem != null)
+        {
+            inventory.AddItem(recipe.ResultItem, (float)recipe.ResultAmount);
+            
+            // Apenas atualiza a UI se ela existir, sem abrir o menu
+            FindObjectOfType<InventoryUI>()?.RefreshUI();
+        }
 
         // Spawn no mundo
         if (recipe.ResultPrefab != null)
